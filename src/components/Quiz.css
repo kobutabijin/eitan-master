@@ -109,6 +109,12 @@
   box-shadow: var(--shadow-card);
 }
 
+.quiz-feedback {
+  margin: 0 0 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .result-card {
   background: var(--card-face);
   border-radius: var(--radius-lg);

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import React from "react";
 import words from "../data/words.json";
 import "./Home.css";
 
@@ -52,11 +52,11 @@ export default function Home({ learnedCount }) {
 
       <nav className="menu-grid">
         {menu.map((item) => (
-          <Link key={item.to} to={item.to} className={`menu-card tone-${item.tone}`}>
+          <a key={item.to} href={item.to} className={`menu-card tone-${item.tone}`}>
             <span className="menu-icon" aria-hidden="true">{item.icon}</span>
             <span className="menu-label">{item.label}</span>
             <span className="menu-desc">{item.desc}</span>
-          </Link>
+          </a>
         ))}
       </nav>
     </div>
