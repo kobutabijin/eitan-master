@@ -73,10 +73,15 @@ export function useProgress() {
   }, [progress]);
 
   const markLearned = useCallback((id, learned) => {
-    setProgress((prev) => ({
-      ...prev,
-      learned: { ...prev.learned, [id]: learned },
-    }));
+    setProgress((prev) => {
+      const nextLearned = { ...prev.learned };
+      if (learned) {
+        nextLearned[id] = true;
+      } else {
+        delete nextLearned[id];
+      }
+      return { ...prev, learned: nextLearned };
+    });
   }, []);
 
   const isLearned = useCallback(
@@ -84,7 +89,7 @@ export function useProgress() {
     [progress.learned]
   );
 
-  const learnedCount = Object.values(progress.learned).filter(Boolean).length;
+  const learnedCount = Object.keys(progress.learned).length;
 
   const addQuizResult = useCallback((correct, total) => {
     setProgress((prev) => ({
@@ -97,6 +102,7 @@ export function useProgress() {
   }, []);
 
   return {
+    learned: progress.learned,
     markLearned,
     isLearned,
     learnedCount,

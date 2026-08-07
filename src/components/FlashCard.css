@@ -134,6 +134,11 @@
   font-weight: 700;
   font-size: 15px;
   box-shadow: var(--shadow-card);
+  border: 3px solid transparent;
+}
+
+.fc-eval-btn.is-selected {
+  border-color: var(--ink);
 }
 
 .fc-eval-no {

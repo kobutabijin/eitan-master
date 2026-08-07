@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "app": "node scripts/open-app.js",
+    "browser:install": "playwright install chromium",
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",

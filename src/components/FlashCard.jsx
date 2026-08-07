@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import words from "../data/words.json";
 import "./FlashCard.css";
 
-export default function FlashCard({ isLearned, markLearned }) {
+export default function FlashCard({ learned, markLearned }) {
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
+  const [deck, setDeck] = useState(words);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-
-  const deck = onlyUnlearned
-    ? words.filter((word) => !isLearned(word.id))
-    : words;
+  const isLearned = (id) => Boolean(learned[id]);
+  const unlearnedCount = words.length - Object.keys(learned).length;
 
   const current = deck[index];
   const isDone = deck.length === 0;
@@ -35,13 +34,19 @@ export default function FlashCard({ isLearned, markLearned }) {
     markLearned(current.id, learned);
     setFlipped(false);
 
-    if (!onlyUnlearned || !learned) {
-      setIndex((i) => (i + 1 < deck.length ? i + 1 : 0));
-    }
+    setIndex((i) => (i + 1 < deck.length ? i + 1 : 0));
   };
 
-  const toggleMode = () => {
-    setOnlyUnlearned((v) => !v);
+  const showAll = () => {
+    setOnlyUnlearned(false);
+    setDeck(words);
+    setIndex(0);
+    setFlipped(false);
+  };
+
+  const showUnlearned = () => {
+    setOnlyUnlearned(true);
+    setDeck(words.filter((word) => !isLearned(word.id)));
     setIndex(0);
     setFlipped(false);
   };
@@ -56,17 +61,17 @@ export default function FlashCard({ isLearned, markLearned }) {
       <div className="fc-mode-row">
         <button
           className={`filter-chip ${!onlyUnlearned ? "active" : ""}`}
-          onClick={() => onlyUnlearned && toggleMode()}
+          onClick={showAll}
           aria-pressed={!onlyUnlearned}
         >
           すべて ({words.length})
         </button>
         <button
           className={`filter-chip ${onlyUnlearned ? "active" : ""}`}
-          onClick={() => !onlyUnlearned && toggleMode()}
+          onClick={showUnlearned}
           aria-pressed={onlyUnlearned}
         >
-          未習得のみ ({words.filter((w) => !isLearned(w.id)).length})
+          未習得のみ ({unlearnedCount})
         </button>
       </div>
 
@@ -106,10 +111,18 @@ export default function FlashCard({ isLearned, markLearned }) {
           </div>
 
           <div className="fc-evaluate-row">
-            <button className="fc-eval-btn fc-eval-no" onClick={() => handleEvaluate(false)}>
+            <button
+              className={`fc-eval-btn fc-eval-no ${!isLearned(current.id) ? "is-selected" : ""}`}
+              onClick={() => handleEvaluate(false)}
+              aria-pressed={!isLearned(current.id)}
+            >
               まだ覚えていない
             </button>
-            <button className="fc-eval-btn fc-eval-yes" onClick={() => handleEvaluate(true)}>
+            <button
+              className={`fc-eval-btn fc-eval-yes ${isLearned(current.id) ? "is-selected" : ""}`}
+              onClick={() => handleEvaluate(true)}
+              aria-pressed={isLearned(current.id)}
+            >
               わかった！
             </button>
           </div>

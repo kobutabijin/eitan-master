@@ -6,14 +6,14 @@ import Quiz from "./components/Quiz";
 import { useProgress } from "./hooks/useProgress";
 
 function App() {
-  const { isLearned, markLearned, learnedCount, addQuizResult } = useProgress();
+  const { learned, isLearned, markLearned, learnedCount, addQuizResult } = useProgress();
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
 
   if (path === "/list") {
     return <WordList isLearned={isLearned} markLearned={markLearned} />;
   }
   if (path === "/flashcard") {
-    return <FlashCard isLearned={isLearned} markLearned={markLearned} />;
+    return <FlashCard learned={learned} markLearned={markLearned} />;
   }
   if (path === "/quiz") {
     return <Quiz addQuizResult={addQuizResult} />;

@@ -130,7 +130,7 @@ export default function Quiz({ addQuizResult }) {
 
       <div className="quiz-question-card">
         <span className="quiz-question-label">この単語の意味は？</span>
-        <span className="quiz-question-word">{current.word}</span>
+        <span className="quiz-question-word">{current.word.word}</span>
       </div>
 
       <div className="quiz-choices">
