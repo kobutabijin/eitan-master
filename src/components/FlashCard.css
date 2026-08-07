@@ -113,7 +113,8 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--ink-soft);
-  padding: 8px 16px;
+  min-height: 44px;
+  padding: 10px 16px;
 }
 
 .fc-nav-btn:hover {

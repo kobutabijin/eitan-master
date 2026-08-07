@@ -1,5 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useMemo, useCallback } from "react";
 import words from "../data/words.json";
 import "./Quiz.css";
 
@@ -24,7 +23,7 @@ function buildQuestions() {
 }
 
 export default function Quiz({ addQuizResult }) {
-  const [questions] = useState(buildQuestions);
+  const [questions, setQuestions] = useState(buildQuestions);
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
@@ -59,7 +58,12 @@ export default function Quiz({ addQuizResult }) {
   };
 
   const restart = () => {
-    window.location.reload();
+    setQuestions(buildQuestions());
+    setQIndex(0);
+    setSelected(null);
+    setCorrectCount(0);
+    setWrongWords([]);
+    setFinished(false);
   };
 
   const scorePercent = useMemo(
@@ -71,7 +75,7 @@ export default function Quiz({ addQuizResult }) {
     return (
       <div className="app-shell">
         <div className="top-bar">
-          <Link to="/" className="back-link">← ホーム</Link>
+          <a href="/" className="back-link">← ホーム</a>
           <h1 className="page-title">クイズ結果</h1>
         </div>
 
@@ -96,7 +100,7 @@ export default function Quiz({ addQuizResult }) {
 
         <div className="result-actions">
           <button className="result-btn primary" onClick={restart}>もう一度挑戦する</button>
-          <Link to="/" className="result-btn secondary">ホームへ戻る</Link>
+          <a href="/" className="result-btn secondary">ホームへ戻る</a>
         </div>
       </div>
     );
@@ -105,12 +109,19 @@ export default function Quiz({ addQuizResult }) {
   return (
     <div className="app-shell">
       <div className="top-bar">
-        <Link to="/" className="back-link">← ホーム</Link>
+        <a href="/" className="back-link">← ホーム</a>
         <h1 className="page-title">クイズ</h1>
       </div>
 
       <p className="quiz-progress">問題 {qIndex + 1} / {questions.length}</p>
-      <div className="quiz-progress-track">
+      <div
+        className="quiz-progress-track"
+        role="progressbar"
+        aria-label="クイズの進み具合"
+        aria-valuenow={qIndex + (selected ? 1 : 0)}
+        aria-valuemin={0}
+        aria-valuemax={questions.length}
+      >
         <div
           className="quiz-progress-fill"
           style={{ width: `${((qIndex + (selected ? 1 : 0)) / questions.length) * 100}%` }}
@@ -146,11 +157,20 @@ export default function Quiz({ addQuizResult }) {
         })}
       </div>
 
-      {selected && (
-        <button className="quiz-next-btn" onClick={handleNext}>
-          {isLast ? "結果を見る" : "次の問題へ"}
-        </button>
-      )}
+      <div aria-live="polite">
+        {selected && (
+          <>
+            <p className="quiz-feedback">
+              {selected === current.answer
+                ? "正解です。"
+                : `不正解です。正解は「${current.answer}」です。`}
+            </p>
+            <button className="quiz-next-btn" onClick={handleNext}>
+              {isLast ? "結果を見る" : "次の問題へ"}
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

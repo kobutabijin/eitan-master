@@ -1,5 +1,4 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import words from "../data/words.json";
 import "./FlashCard.css";
 
@@ -8,13 +7,18 @@ export default function FlashCard({ isLearned, markLearned }) {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  const deck = useMemo(() => {
-    return onlyUnlearned ? words.filter((w) => !isLearned(w.id)) : words;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onlyUnlearned]);
+  const deck = onlyUnlearned
+    ? words.filter((word) => !isLearned(word.id))
+    : words;
 
   const current = deck[index];
   const isDone = deck.length === 0;
+
+  useEffect(() => {
+    if (deck.length > 0 && index >= deck.length) {
+      setIndex(deck.length - 1);
+    }
+  }, [deck.length, index]);
 
   const goNext = () => {
     setFlipped(false);
@@ -29,7 +33,11 @@ export default function FlashCard({ isLearned, markLearned }) {
   const handleEvaluate = (learned) => {
     if (!current) return;
     markLearned(current.id, learned);
-    goNext();
+    setFlipped(false);
+
+    if (!onlyUnlearned || !learned) {
+      setIndex((i) => (i + 1 < deck.length ? i + 1 : 0));
+    }
   };
 
   const toggleMode = () => {
@@ -41,7 +49,7 @@ export default function FlashCard({ isLearned, markLearned }) {
   return (
     <div className="app-shell">
       <div className="top-bar">
-        <Link to="/" className="back-link">← ホーム</Link>
+        <a href="/" className="back-link">← ホーム</a>
         <h1 className="page-title">暗記カード</h1>
       </div>
 
@@ -49,12 +57,14 @@ export default function FlashCard({ isLearned, markLearned }) {
         <button
           className={`filter-chip ${!onlyUnlearned ? "active" : ""}`}
           onClick={() => onlyUnlearned && toggleMode()}
+          aria-pressed={!onlyUnlearned}
         >
           すべて ({words.length})
         </button>
         <button
           className={`filter-chip ${onlyUnlearned ? "active" : ""}`}
           onClick={() => !onlyUnlearned && toggleMode()}
+          aria-pressed={onlyUnlearned}
         >
           未習得のみ ({words.filter((w) => !isLearned(w.id)).length})
         </button>
@@ -63,7 +73,7 @@ export default function FlashCard({ isLearned, markLearned }) {
       {isDone ? (
         <div className="fc-empty">
           <p>🎉 このモードのカードはすべて習得済みです！</p>
-          <Link to="/" className="fc-home-btn">ホームへ戻る</Link>
+          <a href="/" className="fc-home-btn">ホームへ戻る</a>
         </div>
       ) : (
         <>
@@ -73,7 +83,7 @@ export default function FlashCard({ isLearned, markLearned }) {
             <button
               className={`fc-card ${flipped ? "is-flipped" : ""}`}
               onClick={() => setFlipped((f) => !f)}
-              aria-label="タップして裏返す"
+              aria-label={`${flipped ? "日本語訳" : "英単語"}を表示中。押すと${flipped ? "英単語" : "日本語訳"}を表示します`}
             >
               <div className="fc-card-inner">
                 <div className="fc-card-face fc-front">

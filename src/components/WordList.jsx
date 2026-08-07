@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo, useState } from "react";
 import words from "../data/words.json";
 import "./WordList.css";
 
@@ -26,7 +25,7 @@ export default function WordList({ isLearned, markLearned }) {
   return (
     <div className="app-shell">
       <div className="top-bar">
-        <Link to="/" className="back-link">← ホーム</Link>
+        <a href="/" className="back-link">← ホーム</a>
         <h1 className="page-title">単語一覧</h1>
       </div>
 

@@ -4,6 +4,11 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+coverage/
 
 # Environment variables
 .env
@@ -34,3 +39,6 @@ pnpm-debug.log*
 
 # Vite cache
 .vite/
+
+# Internal docs (not for public repo)
+docs/
